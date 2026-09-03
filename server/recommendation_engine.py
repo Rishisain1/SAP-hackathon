@@ -39,7 +39,7 @@ def supplier_quality_recommendation(payload: dict) -> Optional[dict]:
 
     best_supplier, best_rate = min(alternatives, key=lambda item: item[1])
     quantity = int(input_data["quantity"])
-    negotiated_price = float(input_data["negotiatedPrice"])
+    unit_price = float(input_data["unitPrice"])
     current_predicted_rate = defect.get("defectRatePct", current_rate * 100) / 100
     adjusted_target_rate = max(best_rate, current_predicted_rate - max(0, current_rate - best_rate))
     reduced_units = max(0, round(quantity * (current_predicted_rate - adjusted_target_rate)))
@@ -55,7 +55,7 @@ def supplier_quality_recommendation(payload: dict) -> Optional[dict]:
         ),
         "impact": (
             f"Estimated reduction of {reduced_units} defective units "
-            f"({round_money(reduced_units * negotiated_price)} USD protected)."
+            f"({round_money(reduced_units * unit_price)} USD protected)."
         ),
         "priority": "High" if reduced_units >= 50 else "Medium",
         "applyPatch": {
@@ -63,7 +63,7 @@ def supplier_quality_recommendation(payload: dict) -> Optional[dict]:
         },
         "metrics": {
             "estimatedDefectReductionUnits": reduced_units,
-            "estimatedFinancialProtection": round_money(reduced_units * negotiated_price),
+            "estimatedFinancialProtection": round_money(reduced_units * unit_price),
             "currentSupplierDefectRatePct": round(current_rate * 100, 2),
             "recommendedSupplierDefectRatePct": round(best_rate * 100, 2),
         },

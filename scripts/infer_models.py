@@ -48,8 +48,8 @@ def main() -> None:
     delay_model = joblib.load(MODEL_DIR / "delay_model.pkl")
 
     delivery_days = days_between(input_data["orderDate"], input_data["expectedDeliveryDate"])
-    discount = max(0, float(input_data["unitPrice"]) - float(input_data["negotiatedPrice"]))
     quantity = int(input_data["quantity"])
+    unit_price = float(input_data["unitPrice"])
 
     defect_frame = pd.DataFrame(
         [
@@ -59,7 +59,7 @@ def main() -> None:
                 "Order_Status": "Delivered",
                 "Quantity": quantity,
                 "Delivery_Time_Days": delivery_days,
-                "Discount": discount,
+                "Unit_Price": unit_price,
             }
         ]
     )
@@ -93,7 +93,7 @@ def main() -> None:
             "modelSource": "python-pkl-model",
             "estimatedDefectiveUnits": estimated_defective,
             "defectRatePct": round(defect_rate_pct, 2),
-            "expectedFinancialImpact": round(estimated_defective * float(input_data["negotiatedPrice"]), 2),
+            "expectedFinancialImpact": round(estimated_defective * unit_price, 2),
             "supplierHistoricalDefectRatePct": round(defect_rate_pct, 2),
             "categoryHistoricalDefectRatePct": round(defect_rate_pct, 2),
             "supplierDefectLiftPct": 0,

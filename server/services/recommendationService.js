@@ -23,12 +23,12 @@ function fallbackRecommendations(input, defect, delay, weather) {
       recommendations.push({
         category: 'Supplier Quality',
         action: `Switch this PO from ${input.supplier} to ${bestSupplier}; historical defect rate drops from ${round(currentSupplierRate * 100, 2)}% to ${round(bestRate * 100, 2)}%.`,
-        impact: `Estimated reduction of ${reducedUnits} defective units (${round(reducedUnits * input.negotiatedPrice, 2)} USD protected).`,
+        impact: `Estimated reduction of ${reducedUnits} defective units (${round(reducedUnits * input.unitPrice, 2)} USD protected).`,
         priority: reducedUnits >= 50 ? 'High' : 'Medium',
         applyPatch: { supplier: bestSupplier },
         metrics: {
           estimatedDefectReductionUnits: reducedUnits,
-          estimatedFinancialProtection: round(reducedUnits * input.negotiatedPrice, 2),
+          estimatedFinancialProtection: round(reducedUnits * input.unitPrice, 2),
           currentSupplierDefectRatePct: round(currentSupplierRate * 100, 2),
           recommendedSupplierDefectRatePct: round(bestRate * 100, 2)
         }

@@ -57,16 +57,9 @@ export default function OrderForm({ form, setForm, onSubmit, loading, error }) {
             </select>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             <NumberField label="Quantity" value={form.quantity} onChange={update('quantity')} min="1" icon={Package} />
             <NumberField label="Unit Price" value={form.unitPrice} onChange={update('unitPrice')} min="0.01" step="0.01" />
-            <NumberField
-              label="Negotiated"
-              value={form.negotiatedPrice}
-              onChange={update('negotiatedPrice')}
-              min="0.01"
-              step="0.01"
-            />
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">

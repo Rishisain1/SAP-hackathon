@@ -22,7 +22,6 @@ const purchaseOrderSchema = z
     itemCategory: z.string().min(2),
     quantity: z.coerce.number().int().positive().max(1000000),
     unitPrice: z.coerce.number().positive().max(10000000),
-    negotiatedPrice: z.coerce.number().positive().max(10000000),
     orderDate: z.string().date(),
     expectedDeliveryDate: z.string().date(),
     originLocation: z.string().min(2).max(120),
@@ -32,10 +31,6 @@ const purchaseOrderSchema = z
   .refine((data) => new Date(data.expectedDeliveryDate) >= new Date(data.orderDate), {
     message: 'Expected delivery date must be on or after order date.',
     path: ['expectedDeliveryDate']
-  })
-  .refine((data) => data.negotiatedPrice <= data.unitPrice * 1.2, {
-    message: 'Negotiated price looks unusually high compared with unit price.',
-    path: ['negotiatedPrice']
   });
 
 app.get('/api/health', (_req, res) => {

@@ -39,8 +39,6 @@ function predictDefects(input, weather) {
   const supplierProfile = getSupplierProfile(input.supplier);
   const categoryProfile = getCategoryProfile(input.itemCategory);
   const deliveryDays = daysBetween(input.orderDate, input.expectedDeliveryDate);
-  const discount = Math.max(0, input.unitPrice - input.negotiatedPrice);
-  const discountPct = input.unitPrice > 0 ? discount / input.unitPrice : 0;
 
   const historicalRate =
     supplierProfile.defectRate * 0.56 +
@@ -48,7 +46,7 @@ function predictDefects(input, weather) {
     profiles.overallDefectRate * 0.16;
 
   const quantityAdjustment = clamp(Math.log10(input.quantity) / 34, 0, 0.105);
-  const pricePressure = clamp(discountPct * 0.32, 0, 0.12);
+  const pricePressure = clamp(input.unitPrice / 2500, 0, 0.045);
   const timelinePressure = deliveryDays < 7 ? 0.035 : deliveryDays > 25 ? -0.012 : 0;
   const weatherPressure = weather.severity * 0.025;
 
@@ -58,7 +56,7 @@ function predictDefects(input, weather) {
     0.38
   );
   const defectiveUnits = Math.min(input.quantity, Math.round(input.quantity * rate));
-  const financialImpact = defectiveUnits * input.negotiatedPrice;
+  const financialImpact = defectiveUnits * input.unitPrice;
 
   return {
     modelSource: 'dataset-calibrated-js-fallback',
@@ -138,18 +136,11 @@ function buildRiskBreakdown(input, defect, delay, weather) {
     breakdown.push(alert.message);
   }
 
-  if (input.unitPrice > input.negotiatedPrice) {
-    const discountPct = ((input.unitPrice - input.negotiatedPrice) / input.unitPrice) * 100;
-    if (discountPct >= 8) {
-      breakdown.push(`Negotiated discount of ${round(discountPct, 1)}% increases supplier fulfillment pressure.`);
-    }
-  }
-
   return breakdown;
 }
 
 function combineRisk(input, defect, delay, weather) {
-  const orderValue = input.quantity * input.negotiatedPrice;
+  const orderValue = input.quantity * input.unitPrice;
   const financialExposurePct = orderValue > 0 ? defect.expectedFinancialImpact / orderValue : 0;
   const defectComponent = clamp(defect.defectRatePct / 25, 0, 1) * 36;
   const delayComponent = clamp(delay.predictedDelayDays / 7, 0, 1) * 28;

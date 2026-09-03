@@ -21,7 +21,6 @@ def train_defective_model() -> None:
     df["Order_Date"] = pd.to_datetime(df["Order_Date"])
     df["Delivery_Date"] = pd.to_datetime(df["Delivery_Date"])
     df["Delivery_Time_Days"] = (df["Delivery_Date"] - df["Order_Date"]).dt.days.clip(lower=1)
-    df["Discount"] = (df["Unit_Price"] - df["Negotiated_Price"]).clip(lower=0)
 
     features = [
         "Supplier",
@@ -29,14 +28,14 @@ def train_defective_model() -> None:
         "Order_Status",
         "Quantity",
         "Delivery_Time_Days",
-        "Discount",
+        "Unit_Price",
     ]
     X = df[features]
     y = df["Defective_Units"]
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ("num", SimpleImputer(strategy="median"), ["Quantity", "Delivery_Time_Days", "Discount"]),
+            ("num", SimpleImputer(strategy="median"), ["Quantity", "Delivery_Time_Days", "Unit_Price"]),
             ("cat", OneHotEncoder(handle_unknown="ignore"), ["Supplier", "Item_Category", "Order_Status"]),
         ]
     )

@@ -17,7 +17,6 @@ const defaultForm = {
   itemCategory: 'Raw Materials',
   quantity: 1180,
   unitPrice: 64.07,
-  negotiatedPrice: 60.53,
   orderDate: initialOrderDate,
   expectedDeliveryDate: initialDeliveryDate,
   originLocation: 'Mumbai',
@@ -40,8 +39,8 @@ function statusAccent(status) {
 }
 
 function validate(form) {
-  if (form.quantity <= 0 || form.unitPrice <= 0 || form.negotiatedPrice <= 0) {
-    return 'Quantity, unit price, and negotiated price must be positive.';
+  if (form.quantity <= 0 || form.unitPrice <= 0) {
+    return 'Quantity and unit price must be positive.';
   }
   if (new Date(form.expectedDeliveryDate) < new Date(form.orderDate)) {
     return 'Expected delivery date must be on or after the order date.';
@@ -56,7 +55,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [appliedRecommendation, setAppliedRecommendation] = useState(null);
 
-  const orderValue = useMemo(() => form.quantity * form.negotiatedPrice, [form.quantity, form.negotiatedPrice]);
+  const orderValue = useMemo(() => form.quantity * form.unitPrice, [form.quantity, form.unitPrice]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -102,7 +101,7 @@ export default function App() {
                 <HeaderMetric icon={Activity} label="Order Value" value={currency(orderValue)} />
                 <HeaderMetric icon={CalendarClock} label="Mode" value={form.shippingMode} />
                 <HeaderMetric icon={ShieldAlert} label="Supplier" value={form.supplier.replace('_', ' ')} />
-                <HeaderMetric icon={Banknote} label="Discount" value={currency((form.unitPrice - form.negotiatedPrice) * form.quantity)} />
+                <HeaderMetric icon={Banknote} label="Unit Price" value={currency(form.unitPrice)} />
               </div>
             </header>
 
