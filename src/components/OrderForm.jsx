@@ -1,6 +1,6 @@
 import { CalendarDays, Factory, MapPin, Package, Send } from 'lucide-react';
+import { supplierLocations, suppliers } from '../lib/supplierLocations.js';
 
-const suppliers = ['Alpha_Inc', 'Beta_Supplies', 'Gamma_Co', 'Delta_Logistics', 'Epsilon_Group'];
 const categories = ['Office Supplies', 'MRO', 'Packaging', 'Raw Materials', 'Electronics', 'Chemicals', 'Hardware'];
 const shippingModes = ['Air', 'Road', 'Rail', 'Sea'];
 
@@ -11,6 +11,15 @@ export default function OrderForm({ form, setForm, onSubmit, loading, error }) {
   const update = (field) => (event) => {
     const value = event.target.type === 'number' ? Number(event.target.value) : event.target.value;
     setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const updateSupplier = (event) => {
+    const supplier = event.target.value;
+    setForm((current) => ({
+      ...current,
+      supplier,
+      originLocation: supplierLocations[supplier] ?? current.originLocation
+    }));
   };
 
   return (
@@ -29,13 +38,14 @@ export default function OrderForm({ form, setForm, onSubmit, loading, error }) {
             <label className="text-sm font-medium text-slate-700" htmlFor="supplier">
               Vendor / Supplier
             </label>
-            <select id="supplier" className={fieldBase} value={form.supplier} onChange={update('supplier')} required>
+            <select id="supplier" className={fieldBase} value={form.supplier} onChange={updateSupplier} required>
               {suppliers.map((supplier) => (
                 <option key={supplier} value={supplier}>
-                  {supplier}
+                  {supplier} - {supplierLocations[supplier]}
                 </option>
               ))}
             </select>
+            <p className="mt-1 text-xs text-slate-500">Origin auto-fills from the selected supplier.</p>
           </div>
 
           <div>

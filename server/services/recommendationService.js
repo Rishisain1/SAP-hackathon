@@ -2,6 +2,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { addDays, round } from '../utils/math.js';
 import { profiles } from './dataProfiles.js';
+import { supplierLocations } from './supplierLocations.js';
 
 const HIGH_SUPPLIER_DEFECT_RATE = 0.1;
 const HIGH_WEATHER_SEVERITY = 0.4;
@@ -25,7 +26,10 @@ function fallbackRecommendations(input, defect, delay, weather) {
         action: `Switch this PO from ${input.supplier} to ${bestSupplier}; historical defect rate drops from ${round(currentSupplierRate * 100, 2)}% to ${round(bestRate * 100, 2)}%.`,
         impact: `Estimated reduction of ${reducedUnits} defective units (${round(reducedUnits * input.unitPrice, 2)} USD protected).`,
         priority: reducedUnits >= 50 ? 'High' : 'Medium',
-        applyPatch: { supplier: bestSupplier },
+        applyPatch: {
+          supplier: bestSupplier,
+          originLocation: supplierLocations[bestSupplier]
+        },
         metrics: {
           estimatedDefectReductionUnits: reducedUnits,
           estimatedFinancialProtection: round(reducedUnits * input.unitPrice, 2),
@@ -128,7 +132,8 @@ export async function generateRecommendations(input, defect, delay, weather) {
     weather,
     profiles: {
       supplierRates: profiles.supplierRates,
-      overallDefectRate: profiles.overallDefectRate
+      overallDefectRate: profiles.overallDefectRate,
+      supplierLocations
     }
   };
 

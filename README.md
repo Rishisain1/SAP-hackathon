@@ -51,4 +51,5 @@ POST http://localhost:5000/api/predict-po-risk
 - If `models/defective_model.pkl` and `models/delay_model.pkl` exist and Python dependencies are installed, Express delegates inference to `scripts/infer_models.py`.
 - If either model is missing or Python inference fails, Express uses local fallback inference calibrated from the provided CSV datasets.
 - `server/recommendation_engine.py` generates prescriptive recommendations for supplier swaps, batch splitting, and weather buffer days. Express falls back to the equivalent JS rules if Python is unavailable.
+- Supplier selections are mapped to shipping origins in `src/lib/supplierLocations.js` and `server/services/supplierLocations.js`; supplier-swap recommendations update both supplier and origin location.
 - `scripts/train_models.py` trains sklearn pipelines from `deffective/Deffective.csv` and `delay/delay.csv`.

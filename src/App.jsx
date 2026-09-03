@@ -7,6 +7,7 @@ import RecommendationCards from './components/RecommendationCards.jsx';
 import RiskBreakdown from './components/RiskBreakdown.jsx';
 import WeatherWidget from './components/WeatherWidget.jsx';
 import { predictPurchaseOrderRisk } from './lib/api.js';
+import { supplierLocations } from './lib/supplierLocations.js';
 
 const today = new Date();
 const initialOrderDate = today.toISOString().slice(0, 10);
@@ -19,7 +20,7 @@ const defaultForm = {
   unitPrice: 64.07,
   orderDate: initialOrderDate,
   expectedDeliveryDate: initialDeliveryDate,
-  originLocation: 'Mumbai',
+  originLocation: supplierLocations.Delta_Logistics,
   destinationLocation: 'Chicago',
   shippingMode: 'Sea'
 };

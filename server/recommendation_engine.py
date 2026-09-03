@@ -23,6 +23,7 @@ def supplier_quality_recommendation(payload: dict) -> Optional[dict]:
     defect = payload["defect"]
     profiles = payload.get("profiles", {})
     supplier_rates = profiles.get("supplierRates", {})
+    supplier_locations = profiles.get("supplierLocations", {})
     current_supplier = input_data["supplier"]
     current_rate = supplier_rates.get(current_supplier, defect.get("supplierHistoricalDefectRatePct", 0) / 100)
 
@@ -59,7 +60,8 @@ def supplier_quality_recommendation(payload: dict) -> Optional[dict]:
         ),
         "priority": "High" if reduced_units >= 50 else "Medium",
         "applyPatch": {
-            "supplier": best_supplier
+            "supplier": best_supplier,
+            "originLocation": supplier_locations.get(best_supplier),
         },
         "metrics": {
             "estimatedDefectReductionUnits": reduced_units,
